@@ -70,7 +70,7 @@ function App() {
     useEffect(() => {
         if (!defaultCurrency) setDefaultCurrency(_.last(data))
         else setDefaultCurrency(_.find(data, {ID: defaultCurrency.ID}))
-    }, [data])
+    }, [data,defaultCurrency])
     useEffect(() => {
         const splittedValue = _.split(value, ' ');
         if (splittedValue.length === 4) {
@@ -81,7 +81,7 @@ function App() {
                 setConvertedValue(convert(from, to, splittedValue[0]))
             }else setConvertedValue(0)
         }else setConvertedValue(0)
-    }, [value]);
+    }, [value,data]);
     useEffect(() => getData(), []);// get initial data
     useEffect(() => { // get data by interval
         const intervalId = setInterval(() => getData(), 15000)
@@ -117,7 +117,7 @@ function App() {
                     variant="outlined"
                 />
                 <h1>
-                    {convertedValue ? `${convertedValue} - ${toCurrency && toCurrency.Name}` : ''}
+                    {convertedValue ? `${convertedValue} - ${_.get(toCurrency,"Name")}` : ''}
                 </h1>
             </Paper>
             <Paper className={classes.paper} elevation={3}>
@@ -136,17 +136,17 @@ function App() {
                         label="Default currency"
                         onChange={e => setDefaultCurrency(e.target.value)}
                     >
-                        {data.map((v, i) => <MenuItem key={i} value={v}>{v.Name}</MenuItem>)}
+                        {data.map((v, i) => <MenuItem key={i} value={v}>{_.get(v,"Name")}</MenuItem>)}
                     </Select>
                 </FormControl>
                 <List sx={{width: '100%', overflow: "auto"}}>
-                    {data.map((v, i) => <ListItem>
+                    {data.map((v, i) => <ListItem key={i}>
                         <ListItemAvatar>
                             <Avatar>
                                 <FlagCircle/>
                             </Avatar>
                         </ListItemAvatar>
-                        <ListItemText primary={v.Name} secondary={`${convert(v, defaultCurrency, 1)} - ${defaultCurrency.Name}`}/>
+                        <ListItemText primary={_.get(v,"Name")} secondary={`${convert(v, defaultCurrency, 1)} - ${_.get(defaultCurrency,"Name")}`}/>
                     </ListItem>)}
                 </List>
             </Paper>
